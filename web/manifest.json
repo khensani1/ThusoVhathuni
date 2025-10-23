@@ -1,0 +1,12 @@
+{
+  "name": "ThusoVhathuni",
+  "short_name": "Thuso",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00897b",
+  "description": "Personal Health Companion",
+  "icons": []
+}
+
+
