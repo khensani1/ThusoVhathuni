@@ -14,6 +14,9 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
   Uint8List? _imageBytes;
   bool _loading = false;
   String? _result;
+  final List<_ChatMessage> _chatMessages = [];
+  final TextEditingController _chatController = TextEditingController();
+  bool _showChat = false;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -67,6 +70,48 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
       _loading = false;
       _result = 'Low risk. Monitor at home. If redness spreads or pain increases, seek care.';
     });
+  }
+
+  void _sendChatMessage() {
+    if (_chatController.text.trim().isEmpty) return;
+    
+    final userMessage = _ChatMessage(
+      text: _chatController.text.trim(),
+      isUser: true,
+      timestamp: DateTime.now(),
+    );
+    
+    setState(() {
+      _chatMessages.add(userMessage);
+      _chatController.clear();
+    });
+
+    // Simulate AI response
+    Future.delayed(const Duration(seconds: 1), () {
+      final aiResponse = _ChatMessage(
+        text: _getAIResponse(userMessage.text),
+        isUser: false,
+        timestamp: DateTime.now(),
+      );
+      setState(() {
+        _chatMessages.add(aiResponse);
+      });
+    });
+  }
+
+  String _getAIResponse(String userMessage) {
+    final message = userMessage.toLowerCase();
+    if (message.contains('diabetes') || message.contains('blood sugar')) {
+      return 'For diabetes management, monitor your blood glucose levels regularly, maintain a balanced diet with controlled carbohydrates, and stay physically active. Always consult your healthcare provider for personalized advice.';
+    } else if (message.contains('blood pressure') || message.contains('hypertension')) {
+      return 'For blood pressure management, reduce sodium intake, maintain a healthy weight, exercise regularly, and limit alcohol consumption. Regular monitoring and medication adherence are crucial.';
+    } else if (message.contains('heart') || message.contains('cardiovascular')) {
+      return 'For heart health, focus on a heart-healthy diet rich in fruits, vegetables, and lean proteins. Regular exercise, stress management, and avoiding smoking are essential.';
+    } else if (message.contains('medication') || message.contains('drug')) {
+      return 'Always take medications as prescribed by your doctor. Set reminders, keep a medication list, and never stop taking medications without consulting your healthcare provider.';
+    } else {
+      return 'I understand you\'re asking about health concerns. For personalized medical advice, please consult with your healthcare provider. I can provide general health information, but specific medical decisions should be made with your doctor.';
+    }
   }
 
   @override
@@ -223,10 +268,109 @@ class _DiagnosticsScreenState extends State<DiagnosticsScreen> {
                     ),
                   ),
                 ],
+                const SizedBox(height: 24),
+                Card(
+                  elevation: 4,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.chat, color: Colors.blue.shade600),
+                        title: const Text('AI Health Assistant'),
+                        subtitle: const Text('Ask questions about your health'),
+                        trailing: IconButton(
+                          icon: Icon(_showChat ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+                          onPressed: () => setState(() => _showChat = !_showChat),
+                        ),
+                      ),
+                      if (_showChat) ...[
+                        Container(
+                          height: 300,
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: _chatMessages.length,
+                                  itemBuilder: (context, index) {
+                                    final message = _chatMessages[index];
+                                    return _ChatBubble(message: message);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: _chatController,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Ask about your health...',
+                                        border: OutlineInputBorder(),
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    onPressed: _sendChatMessage,
+                                    icon: Icon(Icons.send, color: Colors.blue.shade600),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ChatMessage {
+  final String text;
+  final bool isUser;
+  final DateTime timestamp;
+
+  _ChatMessage({required this.text, required this.isUser, required this.timestamp});
+}
+
+class _ChatBubble extends StatelessWidget {
+  final _ChatMessage message;
+
+  const _ChatBubble({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: message.isUser ? Colors.blue.shade600 : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              message.text,
+              style: TextStyle(
+                color: message.isUser ? Colors.white : Colors.black87,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

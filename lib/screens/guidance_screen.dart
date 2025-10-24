@@ -8,8 +8,8 @@ class GuidanceScreen extends StatelessWidget {
     final guidanceItems = [
       _GuidanceItem(
         icon: Icons.restaurant,
-        title: 'Diet Plan for Diabetes',
-        description: 'Lower carbs, more fiber, balanced meals.',
+        title: 'Diabetes Management',
+        description: 'Blood sugar control through diet and lifestyle.',
         color: Colors.green,
         tips: [
           'Choose whole grains over refined carbs',
@@ -17,29 +17,83 @@ class GuidanceScreen extends StatelessWidget {
           'Eat plenty of non-starchy vegetables',
           'Limit sugary drinks and snacks',
         ],
+        foods: [
+          'Quinoa with grilled chicken and vegetables',
+          'Greek yogurt with berries and nuts',
+          'Salmon with sweet potato and broccoli',
+          'Oatmeal with almond butter and banana',
+        ],
+      ),
+      _GuidanceItem(
+        icon: Icons.favorite,
+        title: 'Cardiovascular Health',
+        description: 'Heart disease and stroke prevention.',
+        color: Colors.red,
+        tips: [
+          'Reduce sodium intake to <2,300mg daily',
+          'Include omega-3 rich foods',
+          'Limit saturated and trans fats',
+          'Monitor blood pressure regularly',
+        ],
+        foods: [
+          'Salmon with avocado and spinach salad',
+          'Walnuts and almonds as snacks',
+          'Oatmeal with flaxseeds and berries',
+          'Grilled fish with olive oil and herbs',
+        ],
+      ),
+      _GuidanceItem(
+        icon: Icons.air,
+        title: 'Respiratory Health',
+        description: 'Asthma and COPD management.',
+        color: Colors.blue,
+        tips: [
+          'Avoid triggers like smoke and pollution',
+          'Practice breathing exercises',
+          'Stay hydrated to thin mucus',
+          'Use air purifiers at home',
+        ],
+        foods: [
+          'Green tea with honey and lemon',
+          'Ginger and turmeric smoothies',
+          'Steamed vegetables with garlic',
+          'Warm soups with anti-inflammatory spices',
+        ],
       ),
       _GuidanceItem(
         icon: Icons.fitness_center,
-        title: 'Exercise Tips',
-        description: '30 min walking, 5x per week. Start gradually.',
-        color: Colors.blue,
+        title: 'Exercise Guidelines',
+        description: 'Safe physical activity for chronic conditions.',
+        color: Colors.orange,
         tips: [
           'Start with 10-minute walks daily',
           'Gradually increase to 30 minutes',
           'Include strength training 2x/week',
-          'Monitor blood sugar before/after exercise',
+          'Monitor symptoms during exercise',
+        ],
+        foods: [
+          'Banana with peanut butter pre-workout',
+          'Greek yogurt post-workout',
+          'Hydrating fruits like watermelon',
+          'Protein smoothies for recovery',
         ],
       ),
       _GuidanceItem(
         icon: Icons.water_drop,
-        title: 'Hydration',
-        description: 'Aim for 6–8 glasses of water daily.',
+        title: 'Hydration & Wellness',
+        description: 'Proper hydration for overall health.',
         color: Colors.cyan,
         tips: [
           'Drink water before meals',
           'Carry a water bottle',
           'Set hourly reminders',
           'Monitor urine color for hydration',
+        ],
+        foods: [
+          'Cucumber and mint infused water',
+          'Coconut water for electrolytes',
+          'Herbal teas (chamomile, ginger)',
+          'Water-rich fruits like melons',
         ],
       ),
     ];
@@ -117,6 +171,37 @@ class GuidanceScreen extends StatelessWidget {
                                   ],
                                 ),
                               )),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Healthy Food Examples:',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: item.color,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          ...item.foods.map((food) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.restaurant,
+                                      size: 16,
+                                      color: item.color,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        food,
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )),
                         ],
                       ),
                     ),
@@ -137,6 +222,7 @@ class _GuidanceItem {
   final String description;
   final Color color;
   final List<String> tips;
+  final List<String> foods;
 
   const _GuidanceItem({
     required this.icon,
@@ -144,6 +230,7 @@ class _GuidanceItem {
     required this.description,
     required this.color,
     required this.tips,
+    required this.foods,
   });
 }
 
